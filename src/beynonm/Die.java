@@ -7,26 +7,33 @@
  */
 package beynonm;
 
-import beynonm.DieNotRolledException;
 import java.util.Random;
 
 public class Die {
     public final int MIN_SIDES = 2;
     public final int MAX_SIDES = 100;
 
-    private int currentValue;
+    private int currentValue = 0;
     private int numSides;
-    private Random random;
+    private final Random random = new Random();
 
     public Die(int numSides){
-        this.numSides = numSides;
+        if(MIN_SIDES<=numSides && numSides<=MAX_SIDES){
+            this.numSides = numSides;
+        }else{
+            System.out.println("Number of Sides Invalid");
+        }
     }
 
-    public int getCurrentValue(){
-        return currentValue;
+    public int getCurrentValue() throws DieNotRolledException{
+        if(currentValue == 0){
+            throw new DieNotRolledException();
+        }else{
+            return currentValue;
+        }
     }
 
     public void roll(){
-
+        currentValue = random.nextInt(numSides) + 1;
     }
 }
