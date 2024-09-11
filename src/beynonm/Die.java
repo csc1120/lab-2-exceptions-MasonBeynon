@@ -14,22 +14,24 @@ public class Die {
     public final int MAX_SIDES = 100;
 
     private int currentValue = 0;
-    private int numSides;
+    private final int numSides;
     private final Random random = new Random();
 
-    public Die(int numSides){
+    public Die(int numSides)throws IllegalArgumentException{
         if(MIN_SIDES<=numSides && numSides<=MAX_SIDES){
             this.numSides = numSides;
         }else{
-            System.out.println("Number of Sides Invalid");
+            throw new IllegalArgumentException();
         }
     }
 
     public int getCurrentValue() throws DieNotRolledException{
-        if(currentValue == 0){
-            throw new DieNotRolledException();
+        if (currentValue>=1 && currentValue<=numSides){
+            int temp = currentValue;
+            currentValue = 0;
+            return temp;
         }else{
-            return currentValue;
+            throw new DieNotRolledException();
         }
     }
 

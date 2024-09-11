@@ -8,7 +8,7 @@
 package beynonm;
 
 public class DieNotRolledException  extends RuntimeException{
-    public DieNotRolledException(){};
+    public DieNotRolledException(){}
 
     public String getMessage(){
         return "Die not Rolled";

@@ -7,9 +7,8 @@
  */
 package beynonm;
 
-import beynonm.Die;
-
 public class Driver {
+    /*
     private int[] getInput(){
 
     }
@@ -25,10 +24,21 @@ public class Driver {
     private void report(int numDice, int[] rolls, int max){
 
     }
+    */
 
     public static void main(String[] args) {
         final int MIN_DICE = 2;
         final int MAX_DICE = 10;
 
+
+        Die d6 = new Die(6);
+
+        try {
+            System.out.println(d6.getCurrentValue());
+        } catch (DieNotRolledException e) {
+            System.out.println(e.getMessage());
+        }
+        d6.roll();
+        System.out.println(d6.getCurrentValue());
     }
 }
