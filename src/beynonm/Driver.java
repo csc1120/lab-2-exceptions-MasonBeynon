@@ -12,8 +12,10 @@ public class Driver {
 
     private static int[] getInput(){
         Scanner sc = new Scanner(System.in);
-        System.out.println("Input number of dice, number of sides, then number of rolls. (separated by a single space only)");
-        System.out.println("Example: \"2 6 1000\"");
+        System.out.println("Please enter the number of dice to roll, how many sides the dice have,");
+        System.out.println("and how many rolls to complete, separating the values by a space.");
+        System.out.println("Example: \"2 6 1000\"\n");
+        System.out.print("Enter configuration: ");
         String Sinput = sc.nextLine();
         Sinput = Sinput.trim();
         try{
@@ -60,8 +62,14 @@ public class Driver {
     }
 
     private static void report(int numDice, int[] rolls, int max){
+        int scale = max /10;
         for(int i=0; i<rolls.length; i++){
-            System.out.println(rolls[i]);
+            int numStars = rolls[i]/scale;
+            System.out.printf("%-2s%-2s%-9s%s", i+numDice, ":", rolls[i], "");
+            for(int j=0; j<numStars; j++){
+                System.out.print("*");
+            }
+            System.out.println();
         }
     }
 
