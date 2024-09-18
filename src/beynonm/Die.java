@@ -10,8 +10,8 @@ package beynonm;
 import java.util.Random;
 
 public class Die {
-    public final int MIN_SIDES = 2;
-    public final int MAX_SIDES = 100;
+    public static final int MIN_SIDES = 2;
+    public static final int MAX_SIDES = 100;
 
     private int currentValue = 0;
     private final int numSides;

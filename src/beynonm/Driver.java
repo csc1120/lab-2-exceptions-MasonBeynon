@@ -10,24 +10,45 @@ import java.util.Scanner;
 
 public class Driver {
 
+    static final int MIN_DICE = 2;
+    static final int MAX_DICE = 10;
+
     private static int[] getInput(){
         Scanner sc = new Scanner(System.in);
-        System.out.println("Please enter the number of dice to roll, how many sides the dice have,");
-        System.out.println("and how many rolls to complete, separating the values by a space.");
-        System.out.println("Example: \"2 6 1000\"\n");
-        System.out.print("Enter configuration: ");
-        String Sinput = sc.nextLine();
-        Sinput = Sinput.trim();
-        try{
-            int numDice = Integer.parseInt(Sinput.substring(0,Sinput.indexOf(" ")));
-            Sinput = Sinput.substring(Sinput.indexOf(" ")+1);
-            int numSides = Integer.parseInt(Sinput.substring(0,Sinput.indexOf(" ")));
-            Sinput = Sinput.substring(Sinput.indexOf(" ")+1);
-            int numRolls = Integer.parseInt(Sinput);
-            return new int[]{numDice, numSides, numRolls};
-        } catch (Exception e) {
-            throw new RuntimeException();
+        boolean quit = false;
+        int[] inputs = new int[3];
+        while(!quit) {
+            System.out.println("Please enter the number of dice to roll, how many sides the dice have,");
+            System.out.println("and how many rolls to complete, separating the values by a space.");
+            System.out.println("Example: \"2 6 1000\"\n");
+            System.out.print("Enter configuration: ");
+            String s = sc.nextLine();
+            String[] str = s.split(" ");
+
+            //input validation
+            if(str.length != 3){
+                System.out.println("Invalid input: Expected 3 values but only received " + str.length);
+                continue;
+            }
+            try{
+                for(int i=0; i<str.length; i++){
+                    inputs[i] = Integer.parseInt(str[i]);
+                }
+                if((MIN_DICE>inputs[0])||(inputs[0]>MAX_DICE)){
+                    System.out.println("Invalid input: Illegal number of dice: " + inputs[0]);
+                    continue;
+                }
+                if((Die.MIN_SIDES>inputs[1])||(Die.MAX_SIDES<inputs[1])){
+                    System.out.println("Invalid input: Illegal number of sides: " + inputs[1]);
+                    continue;
+                }
+                quit=true;
+            }catch (NumberFormatException e){
+                System.out.println("Invalid input: All values must be whole numbers.");
+            }
+
         }
+        return inputs;
     }
 
     private static Die[] createDice(int numDice, int numSides){
@@ -75,21 +96,7 @@ public class Driver {
 
 
     public static void main(String[] args) {
-        final int MIN_DICE = 2;
-        final int MAX_DICE = 10;
-
-        int[] userInputs = new int[3];
-
-        boolean quit = false;
-        while(!quit) {
-            try {
-                userInputs = getInput();
-                quit = true;
-            } catch (Exception e) {
-                System.out.println("Invalid user input. Please try again.");
-            }
-        }
-
+        int[] userInputs = getInput();
         Die[] dice = createDice(userInputs[0], userInputs[1]);
         int[] rolls = rollDice(dice, userInputs[1], userInputs[2]);
         int max = findMax(rolls);
