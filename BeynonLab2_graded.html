@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Lab 2 Feedback - Mason Beynon</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
+        h1, h2, h3 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 10px; text-align: left; }
+        .commendation { color: green; }
+        .deduction { color: red; }
+        .suggestion { color: blue; }
+        .code-block { background-color: #f9f9f9; border-left: 3px solid #ccc; padding: 10px; margin: 10px 0; }
+        pre { margin: 0; }
+        .grade { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Lab 2 - Exceptions</h1>
+    <table>
+        <tr>
+            <th>Earned</th>
+            <th>Possible</th>
+            <th>Criteria</th>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>15</td>
+            <td>Intermediate Commits</td>
+        </tr>
+        <tr>
+            <td>58</td>
+            <td>60</td>
+            <td>Technical Quality (see point deductions in code)</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>15</td>
+            <td>Coding Standard Compliance and Program Clarity</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>10</td>
+            <td>Following Submission Instructions</td>
+        </tr>
+    </table>
+
+    <h2>Feedback</h2>
+    <p> Mason,</p>
+    <p>Excellent work on your Lab 2 assignment! Your implementation demonstrates a strong understanding of exception handling, input validation, and modular programming. Below, I've provided detailed feedback highlighting areas where you excelled, as well as suggestions for improvement to help you refine your skills further.</p>
+
+    <h3>General Comments</h3>
+    <p><span class="commendation"><strong>Commendation:</strong></span> Your code is well-organized and easy to follow. The use of helper methods enhances readability and maintainability.</p>
+
+    <h2>Detailed Feedback</h2>
+
+    <h3>Die.java</h3>
+    <div class="code-block">
+        <pre>
+/*
+ * Course: CSC1020
+ * Lab 2 - Exceptions
+ * Die class
+ * Name: Mason Beynon
+ * Last Updated: 9/10/24
+ */
+package beynonm;
+
+import java.util.Random;
+
+public class Die {
+    public static final int MIN_SIDES = 2;
+    public static final int MAX_SIDES = 100;
+
+    private int currentValue = 0;
+    private final int numSides;
+    private final Random random = new Random();
+
+    public Die(int numSides) throws IllegalArgumentException {
+        if (MIN_SIDES <= numSides && numSides <= MAX_SIDES) {
+            this.numSides = numSides;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public int getCurrentValue() throws DieNotRolledException {
+        if (currentValue >= 1 && currentValue <= numSides) {
+            int temp = currentValue;
+            currentValue = 0;
+            return temp;
+        } else {
+            throw new DieNotRolledException();
+        }
+    }
+
+    public void roll() {
+        currentValue = random.nextInt(numSides) + 1;
+    }
+}
+        </pre>
+    </div>
+
+    <p><span class="commendation"><strong>Commendation:</strong></span> You've effectively implemented the <code>Die</code> class with proper validation and exception handling. The way you reset <code>currentValue</code> after retrieving it ensures that each roll is independent, which is excellent practice.</p>
+
+    <p><span class="deduction"><strong>Deduction (-1):</strong></span> In your constructor, when throwing an <code>IllegalArgumentException</code>, it's important to provide a descriptive error message. This helps others understand what went wrong and how to fix it.</p>
+
+    <p><span class="suggestion"><strong>Suggestion for Improvement:</strong></span> Modify your exception to include a message:</p>
+
+    <div class="code-block">
+        <pre>
+throw new IllegalArgumentException("Number of sides must be between " + MIN_SIDES + " and " + MAX_SIDES + ".");
+        </pre>
+    </div>
+
+    <p>This way, if someone tries to create a die with an invalid number of sides, they'll receive a clear explanation of the issue.</p>
+
+    <h3>DieNotRolledException.java</h3>
+    <div class="code-block">
+        <pre>
+/*
+ * Course: CSC1020
+ * Lab 2 - Exceptions
+ * DieNotRolledException class
+ * Name: Mason Beynon
+ * Last Updated: 9/10/2024
+ */
+package beynonm;
+
+public class DieNotRolledException extends RuntimeException {
+    public DieNotRolledException() {}
+
+    public String getMessage() {
+        return "Die not Rolled";
+    }
+}
+        </pre>
+    </div>
+
+    <p><span class="commendation"><strong>Commendation:</strong></span> Creating a custom exception class enhances the clarity of your error handling. Overriding <code>getMessage()</code> to provide a specific message is a thoughtful touch.</p>
+
+    <p><span class="suggestion"><strong>Suggestion for Improvement:</strong></span> Instead of overriding <code>getMessage()</code>, you can pass the message to the superclass constructor. This approach aligns with standard exception handling practices and ensures the message is properly initialized.</p>
+
+    <div class="code-block">
+        <pre>
+public class DieNotRolledException extends RuntimeException {
+    public DieNotRolledException() {
+        super("Die not rolled");
+    }
+}
+        </pre>
+    </div>
+
+    <p>This change allows the exception message to be accessed consistently and avoids the need to override <code>getMessage()</code>.</p>
+
+    <h3>Driver.java</h3>
+    <div class="code-block">
+        <pre>
+/*
+ * Course: CSC1020
+ * Lab 2 - Exceptions
+ * Main Driver class
+ * Name: Mason Beynon
+ * Last Updated: 9/10/24
+ */
+package beynonm;
+import java.util.Scanner;
+
+public class Driver {
+
+    static final int MIN_DICE = 2;
+    static final int MAX_DICE = 10;
+
+    private static int[] getInput() {
+        Scanner sc = new Scanner(System.in);
+        boolean quit = false;
+        int[] inputs = new int[3];
+        while (!quit) {
+            System.out.println("Please enter the number of dice to roll, how many sides the dice have,");
+            System.out.println("and how many rolls to complete, separating the values by a space.");
+            System.out.println("Example: \"2 6 1000\"\n");
+            System.out.print("Enter configuration: ");
+            String s = sc.nextLine();
+            String[] str = s.split(" ");
+
+            // input validation
+            if (str.length != 3) {
+                System.out.println("Invalid input: Expected 3 values but only received " + str.length);
+                continue;
+            }
+            try {
+                for (int i = 0; i < str.length; i++) {
+                    inputs[i] = Integer.parseInt(str[i]);
+                }
+                if ((MIN_DICE > inputs[0]) || (inputs[0] > MAX_DICE)) {
+                    System.out.println("Invalid input: Illegal number of dice: " + inputs[0]);
+                    continue;
+                }
+                if ((Die.MIN_SIDES > inputs[1]) || (Die.MAX_SIDES < inputs[1])) {
+                    System.out.println("Invalid input: Illegal number of sides: " + inputs[1]);
+                    continue;
+                }
+                quit = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: All values must be whole numbers.");
+            }
+
+        }
+        return inputs;
+    }
+
+    private static Die[] createDice(int numDice, int numSides) {
+        Die[] dice = new Die[numDice];
+        for (int i = 0; i < numDice; i++) {
+            dice[i] = new Die(numSides);
+        }
+        return dice;
+    }
+
+    private static int[] rollDice(Die[] dice, int numSides, int numRolls) {
+        int[] rolls = new int[(dice.length * numSides) - dice.length + 1];
+        for (int j = 0; j < numRolls; j++) {
+            int rolled = 0;
+            for (Die die : dice) {
+                die.roll();
+                rolled += die.getCurrentValue();
+            }
+            rolls[rolled - dice.length]++;
+        }
+        return rolls;
+    }
+
+    private static int findMax(int[] rolls) {
+        int max = 0;
+        for (int roll : rolls) {
+            if (roll > max) {
+                max = roll;
+            }
+        }
+        return max;
+    }
+
+    private static void report(int numDice, int[] rolls, int max) {
+        int scale = max / 10;
+        for (int i = 0; i < rolls.length; i++) {
+            int numStars = rolls[i] / scale;
+            System.out.printf("%-2s%-2s%-9s%s", i + numDice, ":", rolls[i], "");
+            for (int j = 0; j < numStars; j++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] userInputs = getInput();
+        Die[] dice = createDice(userInputs[0], userInputs[1]);
+        int[] rolls = rollDice(dice, userInputs[1], userInputs[2]);
+        int max = findMax(rolls);
+        report(dice.length, rolls, max);
+    }
+}
+        </pre>
+    </div>
+
+    <p><span class="commendation"><strong>Commendation:</strong></span> Your <code>getInput()</code> method includes thorough input validation, which is crucial for ensuring your program handles unexpected user input gracefully.</p>
+
+    <p><span class="deduction"><strong>Deduction (-0.5):</strong></span> The <code>Scanner</code> object is not closed after use, which can lead to resource leaks.</p>
+
+    <p><span class="suggestion"><strong>Suggestion for Improvement:</strong></span> Use a try-with-resources statement to automatically close the <code>Scanner</code>:</p>
+
+    <div class="code-block">
+        <pre>
+private static int[] getInput() {
+    boolean quit = false;
+    int[] inputs = new int[3];
+    try (Scanner sc = new Scanner(System.in)) {
+        while (!quit) {
+            // Your input handling code here
+        }
+    }
+    return inputs;
+}
+        </pre>
+    </div>
+
+    <p>This ensures that the <code>Scanner</code> is properly closed when it's no longer needed.</p>
+
+    <p><span class="suggestion"><strong>Suggestion for Improvement:</strong></span> Instead of using multiple <code>continue</code> statements, consider using a boolean flag to manage the loop's flow more clearly. This approach can make your code easier to read and maintain.</p>
+
+    <div class="code-block">
+        <pre>
+// Replace multiple continue statements with a single flag
+boolean isValid = true;
+// ...
+if (str.length != 3) {
+    System.out.println("Invalid input: Expected 3 values but only received " + str.length);
+    isValid = false;
+}
+// ... other validations
+if (isValid) {
+    quit = true;
+}
+        </pre>
+    </div>
+
+    <p><span class="deduction"><strong>Deduction (-0.5):</strong></span> In the <code>report()</code> method, calculating the <code>scale</code> using integer division may result in zero when <code>max</code> is less than 10, leading to a division by zero error when printing stars.</p>
+
+    <p><span class="suggestion"><strong>Suggestion for Improvement:</strong></span> Adjust the calculation to prevent division by zero:</p>
+
+    <div class="code-block">
+        <pre>
+int scale = (max < 10) ? 1 : max / 10;
+        </pre>
+    </div>
+
+    <p>This ensures that <code>scale</code> is always at least 1, avoiding potential errors.</p>
+
+    <h2>Overall Suggestions</h2>
+    <ol>
+        <li><strong>Provide Descriptive Exception Messages:</strong> Always include informative messages when throwing exceptions to help users understand what went wrong.</li>
+        <li><strong>Manage Resources Properly:</strong> Close resources like <code>Scanner</code> objects when they're no longer needed to prevent resource leaks.</li>
+        <li><strong>Enhance Code Readability:</strong> Use boolean flags and clear control flow structures to make your code easier to follow and maintain.</li>
+        <li><strong>Prevent Potential Errors:</strong> Always consider edge cases, such as division by zero, to make your program more robust.</li>
+    </ol>
+
+    <h2>Final Grade</h2>
+    <p class="grade"><strong>Earned:</strong> 98/100</p>
+    <ul>
+        <li>Intermediate Commits: 15/15</li>
+        <li>Technical Quality: 58/60 (Deductions for exception messages and resource management)</li>
+        <li>Coding Standard Compliance and Program Clarity: 15/15</li>
+        <li>Following Submission Instructions: 10/10</li>
+    </ul>
+
+    <p><strong>Overall, you've done an excellent job!</strong> Keep up the great work, and consider the suggestions above to further improve your coding skills.</p>
+
+    <p>If you have any questions about this feedback(cause I am human and can make mistakes) or need further clarification, please feel free to reach out.</p>
+
+    <p><em>Grader: Dr. Ukegbu</em></p>
+</body>
+</html>
